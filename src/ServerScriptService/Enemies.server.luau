@@ -51,6 +51,34 @@ local function nearestPlayerCharacter(from: Vector3): Model?
 	return nearest
 end
 
+local function captureOriginalTransparency(model: Model): { [BasePart]: number }
+	local map: { [BasePart]: number } = {}
+	for _, part in model:GetDescendants() do
+		if part:IsA("BasePart") then
+			map[part] = part.Transparency
+		end
+	end
+	return map
+end
+
+local function fadeModel(model: Model, targetTransparency: number, duration: number)
+	for _, part in model:GetDescendants() do
+		if part:IsA("BasePart") then
+			TweenService:Create(part, TweenInfo.new(duration), {
+				Transparency = targetTransparency,
+			}):Play()
+		end
+	end
+end
+
+local function restoreModelTransparency(model: Model, originals: { [BasePart]: number })
+	for _, part in model:GetDescendants() do
+		if part:IsA("BasePart") then
+			part.Transparency = originals[part] or 0
+		end
+	end
+end
+
 local function attachEnemy(model: Model)
 	local humanoid = model:FindFirstChildOfClass("Humanoid")
 	local hrp = model:FindFirstChild("HumanoidRootPart") :: BasePart?
@@ -63,22 +91,28 @@ local function attachEnemy(model: Model)
 	local maxHealth = humanoid.MaxHealth
 	local lastTouchAt: { [number]: number } = {}
 	local alive = true
+	local originalTransparency = captureOriginalTransparency(model)
+	local hasCustomAI = model:GetAttribute("CustomAI") == true
 
-	task.spawn(function()
-		while model.Parent and humanoid.Parent do
-			task.wait(CHASE_INTERVAL)
-			if not alive then
-				continue
-			end
-			local target = nearestPlayerCharacter(hrp.Position)
-			if target then
-				local targetHrp = target:FindFirstChild("HumanoidRootPart") :: BasePart?
-				if targetHrp then
-					humanoid:MoveTo(targetHrp.Position)
+	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.DisplayWhenDamaged
+
+	if not hasCustomAI then
+		task.spawn(function()
+			while model.Parent and humanoid.Parent do
+				task.wait(CHASE_INTERVAL)
+				if not alive then
+					continue
+				end
+				local target = nearestPlayerCharacter(hrp.Position)
+				if target then
+					local targetHrp = target:FindFirstChild("HumanoidRootPart") :: BasePart?
+					if targetHrp then
+						humanoid:MoveTo(targetHrp.Position)
+					end
 				end
 			end
-		end
-	end)
+		end)
+	end
 
 	hrp.Touched:Connect(function(other)
 		if not alive then
@@ -103,34 +137,20 @@ local function attachEnemy(model: Model)
 		playerHumanoid:TakeDamage(TOUCH_DAMAGE)
 	end)
 
-	local fadeTween: Tween?
-
 	humanoid.Died:Connect(function()
 		alive = false
 		spawnDeathBurst(hrp.Position)
-
-		if fadeTween then
-			fadeTween:Cancel()
-		end
-		local newTween = TweenService:Create(hrp, TweenInfo.new(DEATH_FADE_SECONDS), {
-			Transparency = 1,
-		})
-		fadeTween = newTween
-		newTween:Play()
+		fadeModel(model, 1, DEATH_FADE_SECONDS)
 
 		task.delay(RESPAWN_SECONDS, function()
 			if not model.Parent then
 				return
 			end
-			if fadeTween then
-				fadeTween:Cancel()
-				fadeTween = nil
-			end
 			humanoid.Health = maxHealth
-			hrp.CFrame = startCFrame
-			hrp.Transparency = 0
+			model:PivotTo(startCFrame)
 			hrp.AssemblyLinearVelocity = Vector3.zero
 			hrp.AssemblyAngularVelocity = Vector3.zero
+			restoreModelTransparency(model, originalTransparency)
 			alive = true
 		end)
 	end)

@@ -7,6 +7,7 @@
 -- (Same goes for the Pistol Tool, the Splat, individual pickup parts, walls, etc.)
 
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Teams = game:GetService("Teams")
 
@@ -219,7 +220,6 @@ if not enemies:FindFirstChild("Splat") then
 	splatHumanoid.WalkSpeed = 12
 	splatHumanoid.HipHeight = 0
 	splatHumanoid.DisplayName = "Splat"
-	splatHumanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
 	splatHumanoid.HealthDisplayDistance = 80
 	splatHumanoid.NameDisplayDistance = 80
 	splatHumanoid.BreakJointsOnDeath = false
@@ -236,6 +236,17 @@ if not sounds:FindFirstChild("CurrencyPickup") then
 	sound.SoundId = "rbxasset://sounds/electronicpingshort.wav"
 	sound.Volume = 0.6
 	sound.Parent = sounds
+end
+
+local clientSounds = ensure("Folder", ReplicatedStorage, "Sounds")
+
+if not clientSounds:FindFirstChild("Heartbeat") then
+	local sound = Instance.new("Sound")
+	sound.Name = "Heartbeat"
+	sound.SoundId = "rbxassetid://102383912898742"
+	sound.Looped = true
+	sound.Volume = 0.7
+	sound.Parent = clientSounds
 end
 
 local templates = ensure("Folder", ServerStorage, "Templates")
