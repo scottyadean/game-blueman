@@ -102,6 +102,20 @@ ensure("Part", lobby, "Door", {
 	Material = Enum.Material.WoodPlanks,
 })
 
+local lobbyFloor = lobby:FindFirstChild("Floor") :: BasePart?
+if lobbyFloor and not lobbyFloor:FindFirstChild("LobbyMusic") then
+	local music = Instance.new("Sound")
+	music.Name = "LobbyMusic"
+	music.SoundId = "rbxassetid://1840929918"
+	music.Looped = true
+	music.Volume = 0.4
+	music.Playing = true
+	music.RollOffMode = Enum.RollOffMode.InverseTapered
+	music.RollOffMinDistance = 10
+	music.RollOffMaxDistance = 60
+	music.Parent = lobbyFloor
+end
+
 local arena = ensure("Folder", workspace, "Arena")
 
 ensure("Part", arena, "Floor", {
