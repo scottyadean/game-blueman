@@ -249,6 +249,14 @@ if not clientSounds:FindFirstChild("Heartbeat") then
 	sound.Parent = clientSounds
 end
 
+if not clientSounds:FindFirstChild("Hurt") then
+	local sound = Instance.new("Sound")
+	sound.Name = "Hurt"
+	sound.SoundId = "rbxasset://sounds/uuhhh.mp3"
+	sound.Volume = 0.5
+	sound.Parent = clientSounds
+end
+
 local templates = ensure("Folder", ServerStorage, "Templates")
 
 if not templates:FindFirstChild("Pistol") then
