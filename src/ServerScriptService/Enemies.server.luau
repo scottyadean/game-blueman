@@ -96,6 +96,42 @@ local function attachEnemy(model: Model)
 
 	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.DisplayWhenDamaged
 
+	local hasProperRig = model:FindFirstChild("Head") ~= nil
+	if not hasProperRig then
+		local gui = Instance.new("BillboardGui")
+		gui.Name = "EnemyHealthBar"
+		gui.Adornee = hrp
+		gui.Size = UDim2.new(4, 0, 0.4, 0)
+		gui.StudsOffset = Vector3.new(0, hrp.Size.Y / 2 + 1.5, 0)
+		gui.AlwaysOnTop = true
+		gui.LightInfluence = 0
+		gui.MaxDistance = 100
+		gui.Parent = hrp
+
+		local bg = Instance.new("Frame")
+		bg.Size = UDim2.new(1, 0, 1, 0)
+		bg.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		bg.BorderSizePixel = 0
+		bg.Parent = gui
+
+		local fill = Instance.new("Frame")
+		fill.Name = "Fill"
+		fill.Size = UDim2.new(1, 0, 1, 0)
+		fill.BackgroundColor3 = Color3.fromRGB(220, 40, 40)
+		fill.BorderSizePixel = 0
+		fill.Parent = bg
+
+		local function updateHealthBar()
+			local pct = math.max(humanoid.Health, 0) / humanoid.MaxHealth
+			fill.Size = UDim2.new(pct, 0, 1, 0)
+			gui.Enabled = humanoid.Health > 0 and humanoid.Health < humanoid.MaxHealth
+		end
+
+		updateHealthBar()
+		humanoid:GetPropertyChangedSignal("Health"):Connect(updateHealthBar)
+		humanoid:GetPropertyChangedSignal("MaxHealth"):Connect(updateHealthBar)
+	end
+
 	if not hasCustomAI then
 		task.spawn(function()
 			while model.Parent and humanoid.Parent do
