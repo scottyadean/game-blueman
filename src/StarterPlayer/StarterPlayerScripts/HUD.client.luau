@@ -117,6 +117,33 @@ for i, part in recipe.parts do
 	slotFrames[i] = slot
 end
 
+local currencyBar = Instance.new("Frame")
+currencyBar.Name = "CurrencyBar"
+currencyBar.Size = UDim2.new(0, PANEL_WIDTH, 0, BAR_HEIGHT)
+currencyBar.AnchorPoint = Vector2.new(1, 1)
+currencyBar.Position =
+	UDim2.new(1, -16, 1, -16 - 2 * (BAR_HEIGHT + PADDING) - ASSEMBLY_PANEL_HEIGHT - PADDING)
+currencyBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+currencyBar.BorderSizePixel = 0
+currencyBar.Parent = screenGui
+corner(currencyBar, 3)
+
+local currencyLabel = Instance.new("TextLabel")
+currencyLabel.Size = UDim2.new(1, -12, 1, 0)
+currencyLabel.Position = UDim2.new(0, 6, 0, 0)
+currencyLabel.BackgroundTransparency = 1
+currencyLabel.Text = "BLUE VILES: 0"
+currencyLabel.TextColor3 = Color3.fromRGB(120, 200, 255)
+currencyLabel.TextSize = 11
+currencyLabel.Font = Enum.Font.GothamBold
+currencyLabel.TextXAlignment = Enum.TextXAlignment.Left
+currencyLabel.Parent = currencyBar
+
+local function updateCurrency()
+	local count = localPlayer:GetAttribute("BlueViles") or 0
+	currencyLabel.Text = "BLUE VILES: " .. count
+end
+
 local function updateStamina()
 	local stamina = localPlayer:GetAttribute("Stamina") or 0
 	local maxStamina = localPlayer:GetAttribute("MaxStamina") or 100
@@ -155,9 +182,11 @@ end
 
 updateStamina()
 updateAssembly()
+updateCurrency()
 localPlayer:GetAttributeChangedSignal("Stamina"):Connect(updateStamina)
 localPlayer:GetAttributeChangedSignal("SprintLocked"):Connect(updateStamina)
 localPlayer:GetAttributeChangedSignal("MaxStamina"):Connect(updateStamina)
+localPlayer:GetAttributeChangedSignal("BlueViles"):Connect(updateCurrency)
 
 for _, part in recipe.parts do
 	localPlayer:GetAttributeChangedSignal(part.id):Connect(updateAssembly)

@@ -157,6 +157,30 @@ for _, spec in pickupSpecs do
 	end
 end
 
+local currencyFolder = ensure("Folder", arena, "Currency")
+
+local currencySpawns = {
+	Vector3.new(-60, 4, -60),
+	Vector3.new(60, 4, -60),
+	Vector3.new(-60, 4, 60),
+	Vector3.new(60, 4, 60),
+	Vector3.new(0, 4, -70),
+}
+
+for i, offset in currencySpawns do
+	local vile = ensure("Part", currencyFolder, "BlueVile_" .. i, {
+		Size = Vector3.new(1, 1, 1),
+		Position = ARENA_ORIGIN + offset,
+		Anchored = true,
+		Color = Color3.fromRGB(80, 160, 255),
+		Material = Enum.Material.Neon,
+		Shape = Enum.PartType.Ball,
+	})
+	if not CollectionService:HasTag(vile, "Currency") then
+		CollectionService:AddTag(vile, "Currency")
+	end
+end
+
 local enemies = ensure("Folder", arena, "Enemies")
 
 if not enemies:FindFirstChild("Splat") then
