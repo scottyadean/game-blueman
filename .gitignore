@@ -1,0 +1,35 @@
+# Rojo ad-hoc build output (canonical place file lives in place/, see README)
+build/
+
+# Studio lock files
+*.rbxl.lock
+*.rbxlx.lock
+
+# Cached binary models — commit specific .rbxmx files explicitly when needed
+*.rbxm
+*.rbxmx
+
+# Rojo
+sourcemap.json
+
+# Wally (if added later)
+Packages/
+ServerPackages/
+DevPackages/
+wally.lock
+
+# Selene cache
+.selene-cache/
+
+# IDE
+.idea/
+
+# Claude Code local settings (project-wide settings.json can be committed; local overrides shouldn't)
+.claude/settings.local.json
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Roblox Studio backups
+*.bak
