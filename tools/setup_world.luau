@@ -214,6 +214,16 @@ if not enemies:FindFirstChild("Splat") then
 	CollectionService:AddTag(splat, "Enemy")
 end
 
+local sounds = ensure("Folder", ServerStorage, "Sounds")
+
+if not sounds:FindFirstChild("CurrencyPickup") then
+	local sound = Instance.new("Sound")
+	sound.Name = "CurrencyPickup"
+	sound.SoundId = "rbxasset://sounds/electronicpingshort.wav"
+	sound.Volume = 0.6
+	sound.Parent = sounds
+end
+
 local templates = ensure("Folder", ServerStorage, "Templates")
 
 if not templates:FindFirstChild("Pistol") then

@@ -1,10 +1,17 @@
 local CollectionService = game:GetService("CollectionService")
+local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
+local ServerStorage = game:GetService("ServerStorage")
 
 local TAG = "Currency"
 local ATTRIBUTE = "BlueViles"
 local RESPAWN_SECONDS = 30
 local AMOUNT_PER_PICKUP = 1
+local SOUND_LIFETIME = 2
+
+local soundsFolder = ServerStorage:WaitForChild("Sounds", 5)
+local pickupSoundTemplate = soundsFolder and soundsFolder:FindFirstChild("CurrencyPickup")
+	or nil :: Sound?
 
 local function attachCurrency(part: BasePart)
 	part.Touched:Connect(function(other)
@@ -24,6 +31,13 @@ local function attachCurrency(part: BasePart)
 
 		local current = player:GetAttribute(ATTRIBUTE) or 0
 		player:SetAttribute(ATTRIBUTE, current + AMOUNT_PER_PICKUP)
+
+		if pickupSoundTemplate then
+			local sound = pickupSoundTemplate:Clone()
+			sound.Parent = part
+			sound:Play()
+			Debris:AddItem(sound, SOUND_LIFETIME)
+		end
 
 		part.Transparency = 1
 		part.CanCollide = false
