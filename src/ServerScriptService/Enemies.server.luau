@@ -187,6 +187,7 @@ local function attachEnemy(model: Model)
 			hrp.AssemblyLinearVelocity = Vector3.zero
 			hrp.AssemblyAngularVelocity = Vector3.zero
 			restoreModelTransparency(model, originalTransparency)
+			humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 			alive = true
 		end)
 	end)

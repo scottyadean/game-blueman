@@ -103,6 +103,106 @@ ensure("Part", lobby, "Door", {
 	Material = Enum.Material.WoodPlanks,
 })
 
+if not lobby:FindFirstChild("HowToPlayWall") then
+	local wall = Instance.new("Part")
+	wall.Name = "HowToPlayWall"
+	wall.Size = Vector3.new(14, 7, 0.2)
+	wall.Position = LOBBY_ORIGIN + Vector3.new(0, 5, -LOBBY_FLOOR_SIZE / 2 + 0.6)
+	wall.Anchored = true
+	wall.CanCollide = false
+	wall.BrickColor = BrickColor.new("Really black")
+	wall.Material = Enum.Material.SmoothPlastic
+	wall.Parent = lobby
+
+	local surface = Instance.new("SurfaceGui")
+	surface.Face = Enum.NormalId.Back
+	surface.PixelsPerStud = 50
+	surface.LightInfluence = 0
+	surface.AlwaysOnTop = false
+	surface.Parent = wall
+
+	local title = Instance.new("TextLabel")
+	title.Name = "Title"
+	title.Size = UDim2.new(1, 0, 0.18, 0)
+	title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	title.BorderSizePixel = 0
+	title.Text = "HOW TO PLAY"
+	title.TextColor3 = Color3.fromRGB(230, 230, 230)
+	title.TextScaled = true
+	title.Font = Enum.Font.GothamBold
+	title.Parent = surface
+
+	local titlePadding = Instance.new("UIPadding")
+	titlePadding.PaddingLeft = UDim.new(0, 12)
+	titlePadding.PaddingRight = UDim.new(0, 12)
+	titlePadding.PaddingTop = UDim.new(0, 6)
+	titlePadding.PaddingBottom = UDim.new(0, 6)
+	titlePadding.Parent = title
+
+	local cards = Instance.new("Frame")
+	cards.Name = "Cards"
+	cards.Size = UDim2.new(1, 0, 0.82, 0)
+	cards.Position = UDim2.new(0, 0, 0.18, 0)
+	cards.BackgroundTransparency = 1
+	cards.Parent = surface
+
+	local layout = Instance.new("UIListLayout")
+	layout.FillDirection = Enum.FillDirection.Horizontal
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Center
+	layout.Padding = UDim.new(0.015, 0)
+	layout.Parent = cards
+
+	local cardsPadding = Instance.new("UIPadding")
+	cardsPadding.PaddingLeft = UDim.new(0.015, 0)
+	cardsPadding.PaddingRight = UDim.new(0.015, 0)
+	cardsPadding.PaddingTop = UDim.new(0.05, 0)
+	cardsPadding.PaddingBottom = UDim.new(0.05, 0)
+	cardsPadding.Parent = cards
+
+	local cardSpecs = {
+		{ title = "SEARCH", subtitle = "Find parts", color = Color3.fromRGB(60, 130, 70) },
+		{ title = "BUILD", subtitle = "Craft items", color = Color3.fromRGB(200, 110, 50) },
+		{ title = "RISK", subtitle = "Rare loot", color = Color3.fromRGB(180, 50, 50) },
+		{ title = "ESCAPE", subtitle = "Reach the exit", color = Color3.fromRGB(200, 170, 50) },
+	}
+
+	for i, spec in cardSpecs do
+		local card = Instance.new("Frame")
+		card.Name = "Card_" .. i
+		card.Size = UDim2.new(0.23, 0, 0.95, 0)
+		card.BackgroundColor3 = spec.color
+		card.BorderSizePixel = 0
+		card.Parent = cards
+
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(0, 12)
+		corner.Parent = card
+
+		local cardTitle = Instance.new("TextLabel")
+		cardTitle.Name = "Title"
+		cardTitle.Size = UDim2.new(1, 0, 0.55, 0)
+		cardTitle.Position = UDim2.new(0, 0, 0.1, 0)
+		cardTitle.BackgroundTransparency = 1
+		cardTitle.Text = spec.title
+		cardTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+		cardTitle.TextScaled = true
+		cardTitle.Font = Enum.Font.GothamBold
+		cardTitle.Parent = card
+
+		local cardSubtitle = Instance.new("TextLabel")
+		cardSubtitle.Name = "Subtitle"
+		cardSubtitle.Size = UDim2.new(1, 0, 0.25, 0)
+		cardSubtitle.Position = UDim2.new(0, 0, 0.65, 0)
+		cardSubtitle.BackgroundTransparency = 1
+		cardSubtitle.Text = spec.subtitle
+		cardSubtitle.TextColor3 = Color3.fromRGB(240, 240, 240)
+		cardSubtitle.TextScaled = true
+		cardSubtitle.Font = Enum.Font.Gotham
+		cardSubtitle.Parent = card
+	end
+end
+
 local lobbyFloor = lobby:FindFirstChild("Floor") :: BasePart?
 if lobbyFloor and not lobbyFloor:FindFirstChild("LobbyMusic") then
 	local music = Instance.new("Sound")
@@ -170,6 +270,27 @@ for _, spec in pickupSpecs do
 	if not CollectionService:HasTag(pickup, "Resource") then
 		CollectionService:AddTag(pickup, "Resource")
 	end
+end
+
+local exitBeacon = ensure("Part", arena, "ExitBeacon", {
+	Size = Vector3.new(3, 8, 3),
+	Position = ARENA_ORIGIN + Vector3.new(0, 4, 80),
+	Anchored = true,
+	CanCollide = true,
+	Material = Enum.Material.Neon,
+	Color = Color3.fromRGB(80, 220, 220),
+}) :: BasePart
+
+if not CollectionService:HasTag(exitBeacon, "ExitBeacon") then
+	CollectionService:AddTag(exitBeacon, "ExitBeacon")
+end
+
+if not exitBeacon:FindFirstChildOfClass("PointLight") then
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(80, 220, 220)
+	light.Range = 30
+	light.Brightness = 2
+	light.Parent = exitBeacon
 end
 
 local currencyFolder = ensure("Folder", arena, "Currency")
