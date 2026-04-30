@@ -1,5 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local Teams = game:GetService("Teams")
+local TweenService = game:GetService("TweenService")
 
 local TAG = "ExitBeacon"
 local EXIT_BONUS = 25
@@ -27,6 +28,20 @@ local function attachBeacon(part: BasePart)
 	prompt.HoldDuration = HOLD_SECONDS
 	prompt.MaxActivationDistance = ACTIVATION_DISTANCE
 	prompt.Parent = part
+
+	local baseSize = part.Size
+	local baseColor = part.Color
+	local pulseSize = baseSize * 1.08
+	local pulseColor = Color3.new(
+		math.min(baseColor.R + 0.25, 1),
+		math.min(baseColor.G + 0.1, 1),
+		math.min(baseColor.B + 0.1, 1)
+	)
+	local pulseInfo = TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+	TweenService:Create(part, pulseInfo, {
+		Size = pulseSize,
+		Color = pulseColor,
+	}):Play()
 
 	prompt.Triggered:Connect(function(player)
 		local character = player.Character

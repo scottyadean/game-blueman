@@ -293,6 +293,34 @@ if not exitBeacon:FindFirstChildOfClass("PointLight") then
 	light.Parent = exitBeacon
 end
 
+if not exitBeacon:FindFirstChildOfClass("ParticleEmitter") then
+	local emitter = Instance.new("ParticleEmitter")
+	emitter.Name = "BeaconParticles"
+	emitter.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	emitter.Color = ColorSequence.new(Color3.fromRGB(80, 220, 220))
+	emitter.LightEmission = 1
+	emitter.LightInfluence = 0
+	emitter.Lifetime = NumberRange.new(1.2, 2)
+	emitter.Rate = 14
+	emitter.Speed = NumberRange.new(3, 5)
+	emitter.SpreadAngle = Vector2.new(15, 15)
+	emitter.Acceleration = Vector3.new(0, 4, 0)
+	emitter.EmissionDirection = Enum.NormalId.Top
+	emitter.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.4),
+		NumberSequenceKeypoint.new(0.5, 0.6),
+		NumberSequenceKeypoint.new(1, 0),
+	})
+	emitter.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.2),
+		NumberSequenceKeypoint.new(0.7, 0.4),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	emitter.Rotation = NumberRange.new(0, 360)
+	emitter.RotSpeed = NumberRange.new(-90, 90)
+	emitter.Parent = exitBeacon
+end
+
 local currencyFolder = ensure("Folder", arena, "Currency")
 
 local currencySpawns = {
@@ -311,9 +339,30 @@ for i, offset in currencySpawns do
 		Color = Color3.fromRGB(80, 160, 255),
 		Material = Enum.Material.Neon,
 		Shape = Enum.PartType.Ball,
-	})
+	}) :: BasePart
 	if not CollectionService:HasTag(vile, "Currency") then
 		CollectionService:AddTag(vile, "Currency")
+	end
+	if not vile:FindFirstChildOfClass("ParticleEmitter") then
+		local emitter = Instance.new("ParticleEmitter")
+		emitter.Name = "Shimmer"
+		emitter.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+		emitter.Color = ColorSequence.new(Color3.fromRGB(120, 200, 255))
+		emitter.LightEmission = 1
+		emitter.LightInfluence = 0
+		emitter.Lifetime = NumberRange.new(0.8, 1.4)
+		emitter.Rate = 6
+		emitter.Speed = NumberRange.new(0.5, 1.5)
+		emitter.SpreadAngle = Vector2.new(180, 180)
+		emitter.EmissionDirection = Enum.NormalId.Top
+		emitter.Size = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, 0),
+			NumberSequenceKeypoint.new(0.3, 0.3),
+			NumberSequenceKeypoint.new(1, 0),
+		})
+		emitter.Transparency = NumberSequence.new(0.2, 1)
+		emitter.Rotation = NumberRange.new(0, 360)
+		emitter.Parent = vile
 	end
 end
 
