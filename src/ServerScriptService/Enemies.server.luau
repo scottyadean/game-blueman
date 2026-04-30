@@ -95,6 +95,7 @@ local function attachEnemy(model: Model)
 	local hasCustomAI = model:GetAttribute("CustomAI") == true
 
 	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.DisplayWhenDamaged
+	humanoid.BreakJointsOnDeath = false
 
 	local hasProperRig = model:FindFirstChild("Head") ~= nil
 	if not hasProperRig then
